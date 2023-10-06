@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build_pust_image:
+  build_push_image:
     runs-on: ubuntu-20.04
 
     steps:
@@ -31,7 +31,26 @@ jobs:
         # uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09
         uses: docker/build-push-action@v5.0.0
         with:          
-          context: .          
+          context: . 
           push: true          
           tags: ${{secrets.ACR_NAME}}/contoso-website:latest
+
+  deploy:
+    runs-on: ubuntu-20.04
+    needs: build_push_image # Will wait for the execution of the previous job
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Helm
+        uses: Azure/setup-helm@v3
+        with:
+          version: v3.3.1
+
+      - name: Get AKS Credentials
+        uses: Azure/aks-set-context@v3
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          resource-group: mslearn-gh-pipelines-10381
+          cluster-name: contoso-video 
          
