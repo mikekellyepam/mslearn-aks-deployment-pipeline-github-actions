@@ -1,0 +1,4 @@
+apiVersion: v2
+name: contoso-website
+description: Chart for contoso website
+version: 0.1.0
